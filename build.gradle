@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+    id 'me.champeau.gradle.jmh' version '0.2.0'
+    id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+sourceSets {
+  robot {
+    java {
+      srcDir 'src/robot/java'
+    }
+  }
+}
+
+dependencies {
+    // dependency for acceptance test using robotframework
+    robotCompile    (
+            'org.robotframework:robotframework:2.9.1',
+            sourceSets.main.output,  // add dependency on the main source
+    )
+}
+
+dependencies {
+    testCompile     'junit:junit:4.12'
+}
+
+/**
+Setup a 'robot' task to execute robot test
+*/
+task robot(type: JavaExec) {
+    classpath = sourceSets.robot.runtimeClasspath
+    main = 'org.robotframework.RobotFramework'
+    args '--outputDir', 'target/robot'
+    args 'src/robot/testcase/'
+    /**
+    //args '-v', 'MODE:REMOTE'   // add this mode to run test against a remote Robot server
+    args '-i', 'room'  // run test for a specific person
+    //args '-i', 'Tung'
+    args '-v', 'MODE:DEV'
+    args '-e', 'not_ready'
+     */
+    /**
+    Sample argument to target a specific tag in a test folder
+    */
+    // args 'src/robot/testcase/Testcase core'
+}
+
